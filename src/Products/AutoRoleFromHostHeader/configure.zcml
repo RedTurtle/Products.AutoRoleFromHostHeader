@@ -1,0 +1,22 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:five="http://namespaces.zope.org/five"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    i18n_domain="Products.AutoRole">
+
+  <genericsetup:registerProfile
+    name="default"
+    title="AutoRole PAS Plugin"
+    directory="profiles/default"
+    description="PAS plugin assigning roles based on source IP."
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+    />
+
+  <genericsetup:importStep
+    name="autorole"
+    title="AutoRole PAS Plugin"
+    description="Import AutoRole PAS plugin."
+    handler=".setuphandlers.importVarious">
+  </genericsetup:importStep>
+
+</configure>
