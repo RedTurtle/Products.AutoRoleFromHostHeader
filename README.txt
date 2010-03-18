@@ -25,7 +25,8 @@ Configuration
 
 The plugin is configured by editing the **Header name, regexp and roles**
 property on the plugin's Properties screen. Each line represents a mapping
-from IP network to one or more roles. The format is as follows::
+from an header value (using a regexp match) to one or more roles. The format
+is as follows::
 
   http_header_name; regular expression; role[, role ...]
 
