@@ -10,18 +10,28 @@ from Products.PluggableAuthService.tests.conformance \
 
 from AccessControl.User import SimpleUser
 
+ORIGINAL_REMOTE_ADDR = '127.0.0.1'
+ORIGINAL_HTTP_USER_AGENT = ('Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_2; it-it) '
+                            'AppleWebKit/531.21.8 (KHTML, like Gecko) '
+                            'Version/4.0.4 Safari/531.21.10')
+
 class FakeRequest(UserDict.UserDict):
     client_ip = ''
     _auth = None
     
-    def getClientAddr(self):
-        return self.client_ip
+    REMOTE_ADDR = ORIGINAL_REMOTE_ADDR
+    HTTP_USER_AGENT = ORIGINAL_HTTP_USER_AGENT
     
+    def __getitem__(self, arg):
+        if arg=='REMOTE_ADDR':
+            return self.REMOTE_ADDR
+        if arg=='HTTP_USER_AGENT':
+            return self.HTTP_USER_AGENT
 
 class TestAutoRole(unittest.TestCase, IRolesPlugin_conformance):
 
     def _getTargetClass(self):
-        from Products.AutoRole.plugins.AutoRole \
+        from Products.AutoRoleFromHostHeader.plugins.AutoRole \
             import AutoRole
 
         return AutoRole
@@ -33,20 +43,22 @@ class TestAutoRole(unittest.TestCase, IRolesPlugin_conformance):
         helper = self._makeOne()
         request = FakeRequest()
 
-        helper._updateProperty('ip_roles', ['10.0.1.1/24:Manager,Member'])
-        request.client_ip = '10.0.1.1'
+        helper._updateProperty('match_roles', [r'REMOTE_ADDR;127\.0\.0\.;Manager,Member'])
         self.assertEqual( helper.getRolesForPrincipal( None, request ), ['Member','Manager'])
 
-        helper._updateProperty('ip_roles', ['10.0.1.1/24:Manager',
-                                            '10.0.1.1/16:Member'])
-        request.client_ip = '10.0.255.0'
+        helper._updateProperty('match_roles', [r'REMOTE_ADDR;127\.0\.0\.;Manager',
+                                               r'REMOTE_ADDR;1\.28\.;Member',
+                                               r'HTTP_USER_AGENT;Mozilla\/5\.0;Member,Manager'])
+        request.REMOTE_ADDR='1.28.1.1'
+        request.HTTP_USER_AGENT='Funny 1.0'
         self.assertEqual( helper.getRolesForPrincipal( None, request ), ['Member'])
-        request.client_ip = '10.0.1.1'
+        request.REMOTE_ADDR='10.0.1.49'
+        request.HTTP_USER_AGENT=ORIGINAL_HTTP_USER_AGENT
         self.assertEqual( helper.getRolesForPrincipal( None, request ), ['Member','Manager'])
         
         # Check that only anonymous get roles if anon_only is checked.
         helper.anon_only = True
-        request.client_ip = '10.0.1.1'        
+        request.REMOTE_ADDR = '10.0.1.1'        
         user = SimpleUser('someone', 'something', [], [])
         self.assertEqual( helper.getRolesForPrincipal( user, request ), [])
 
@@ -55,40 +67,22 @@ class TestAutoRole(unittest.TestCase, IRolesPlugin_conformance):
         helper.anon_only = False
 
         # Test for invalid ip address
-        helper._updateProperty('ip_roles', ['10.0.1.1/24:Manager',
-                                         '10.0.1.1/16:Member'])
-        request.client_ip = '999.0.255.1234'
+        helper._updateProperty('match_roles', [r'REMOTE_ADDR;10\.0\.0\.;Manager',
+                                               r'REMOTE_ADDR;10\.1\.0\.;Manager'])
+        request.REMOTE_ADDR = 'invalidip'
         self.assertEqual( helper.getRolesForPrincipal( None, request ), [])
-        request.client_ip = 'invalidip'
+        request.REMOTE_ADDR = ''
         self.assertEqual( helper.getRolesForPrincipal( None, request ), [])
-        request.client_ip = None
-        self.assertEqual( helper.getRolesForPrincipal( None, request ), [])
-
-        # Test for invalid subnets
-        request.client_ip = '10.0.255.0'
-        helper._updateProperty('ip_roles', [])
-        self.assertEqual( helper.getRolesForPrincipal( None, request ), [])
-        self.assertRaises(ValueError, helper._updateProperty, 
-                          'ip_roles', ['999.0.1.1/24:Manager',
-                                       '10.0.1.1/16:',
-                                       ':Manager',
-                                       'invalidsubnet',
-                                        None])
-
-        # 0 is a valid subnet, meaning everything.
-        helper._updateProperty('ip_roles', ['16.16.16.16/0:Manager'])
-        request.client_ip = '240.240.240.240'
-        self.assertEqual( helper.getRolesForPrincipal( None, request ), ['Manager'])
 
     def test_extractCredentials( self ):
         helper = self._makeOne()
         request = FakeRequest()
 
-        helper._updateProperty('ip_roles', ['10.0.1.1/24:Manager,Member'])
-        request.client_ip = '10.0.1.1'
+        helper._updateProperty('match_roles', [r'REMOTE_ADDR;^10\.0\.(100|101)\.;Authenticated,Member'])
+        request.REMOTE_ADDR = '10.0.100.1'
         self.assertEqual(helper.extractCredentials( request ), {'AutoRole':True})
 
-        request.client_ip = '10.1.0.0'
+        request.REMOTE_ADDR = '10.1.0.0'
         self.assertEqual( helper.extractCredentials( request ), {})
 
         request._auth = 'Basic' # No extraction if already http auth
@@ -99,15 +93,12 @@ class TestAutoRole(unittest.TestCase, IRolesPlugin_conformance):
         helper = self._makeOne()
         request = FakeRequest()
 
-        helper._updateProperty('ip_roles', ['10.0.1.1/24:Manager,Member'])
+        helper._updateProperty('match_roles', [r'REMOTE_ADDR;^10\.0\.(100|101)\.;Authenticated,Member'])
 
-        request.client_ip = '10.1.0.0, 127.0.0.1'
+        request.REMOTE_ADDR = 'invalidip'
         self.assertEqual( helper.extractCredentials( request ), {})
 
-        request.client_ip = 'invalidip'
-        self.assertEqual( helper.extractCredentials( request ), {})
-
-        request.client_ip = None
+        request.REMOTE_ADDR = ''
         self.assertEqual( helper.extractCredentials( request ), {})
 
     def test_authenticateCredentials( self ):

@@ -6,15 +6,15 @@
 
   <genericsetup:registerProfile
     name="default"
-    title="AutoRole PAS Plugin"
+    title="AutoRole HTTP Header PAS Plugin"
     directory="profiles/default"
-    description="PAS plugin assigning roles based on source IP."
+    description="PAS plugin assigning roles based on HTTP Header match."
     provides="Products.GenericSetup.interfaces.EXTENSION"
     />
 
   <genericsetup:importStep
     name="autorole"
-    title="AutoRole PAS Plugin"
+    title="AutoRole HTTP Header PAS Plugin"
     description="Import AutoRole PAS plugin."
     handler=".setuphandlers.importVarious">
   </genericsetup:importStep>

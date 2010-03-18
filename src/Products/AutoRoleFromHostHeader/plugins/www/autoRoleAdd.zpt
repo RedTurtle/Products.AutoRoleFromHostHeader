@@ -4,7 +4,7 @@
     tal:replace="structure here/manage_form_title">Form Title</h2>
 
 <p class="form-help">
-AutoRoleFromHostHeader gives users roles based on IP.
+AutoRoleFromHostHeader gives users roles based on a match on an HTTP Header.
 </p>
 
 <form action="addAutoRole" method="post" 
@@ -33,12 +33,12 @@ AutoRoleFromHostHeader gives users roles based on IP.
   <tr>
     <td align="left" valign="top">
     <div class="form-optional">
-    Header name;regexp;role,role,role. 
-    For example: <strong>REMOTE_ADDR;^10\.0\.(100|101)\.;Authenticated,Member</strong>
+    Header name;regexp;role1,role2,...<br/>
+    For example:<br/><em>REMOTE_ADDR;^10\.0\.(100|101)\.;Authenticated,Member</em>
     </div>
     </td>
     <td align="left" valign="top">
-    <textarea name="match_roles:list" size="5"></textarea>
+    <textarea name="match_roles:list" size="8" cols="70"></textarea>
     </td>
   </tr>
   <tr>

@@ -13,21 +13,21 @@ class TestEvent(unittest.TestCase):
         cleanup.cleanUp()
 
     def _getTargetClass(self):
-        from Products.AutoRole.plugins.AutoRole import AutoRole
+        from Products.AutoRoleFromHostHeader.plugins.AutoRole import AutoRole
         return AutoRole
 
     def _makeOne(self, id='test', *args, **kw):
         return self._getTargetClass()(id=id, *args, **kw)
 
-    def testChangingIPRolesFiresEvent(self):
+    def testChangingHEaderMatchFiresEvent(self):
         plugin = self._makeOne()
         self.assertEqual(eventtesting.getEvents(), [])
-        plugin.manage_changeProperties(ip_roles=['127.0.0.0/24:Authenticated'])
+        plugin.manage_changeProperties(match_roles=[r'REMOTE_ADDR;^10\.0\.(100|101)\.;Authenticated,Member'])
         self.assertEqual(len(eventtesting.getEvents()), 1)
         event = eventtesting.getEvents()[0]
         self.assertEqual(event.__class__.__name__, 'ConfigurationChangedEvent')
         self.assertEqual(event.object, plugin)
-        self.assertEqual(event.object.ip_roles, ('127.0.0.0/24:Authenticated',))
+        self.assertEqual(event.object.match_roles, (r'REMOTE_ADDR;^10\.0\.(100|101)\.;Authenticated,Member',))
 
     def testChangingTitleFiresNoEvent(self):
         plugin = self._makeOne()

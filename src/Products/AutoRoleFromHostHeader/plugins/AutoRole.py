@@ -20,7 +20,8 @@ try:
 except NameError:
     # Python 2.3
     from sets import Set as set
-    
+
+import re
 
 manage_addAutoRoleForm = PageTemplateFile(
     'www/autoRoleAdd', globals(), __name__='manage_addAutoRoleForm')
@@ -53,12 +54,12 @@ def quad2int(ip):
 class AutoRole(BasePlugin):
     """ Multi-plugin for assigning auto roles from IP. """
 
-    meta_type = 'Auto Role Plugin'
+    meta_type = 'Auto Role Header Plugin'
     security = ClassSecurityInfo()
 
     _properties = (
         dict(id='title', label='Title', type='string', mode='w'),
-        dict(id='match_roles', label='IP filter and roles', type='lines',
+        dict(id='match_roles', label='Header name, regexp and roles', type='lines',
              mode='w'),
         dict(id='anon_only', label='Anonymous Only', type='boolean',
              mode='w'),
@@ -72,39 +73,19 @@ class AutoRole(BasePlugin):
         self.match_roles = match_roles
         self.anon_only = False
         self._compiled = []
-
-    def _find_ip(self, request=None):
-        if request is None:
-            request = getattr(self, 'REQUEST', None)
-        if request is None:
-            return None
-        return request.getClientAddr()
     
     def _compile_subnets(self):
         self._compiled = compiled = []
         for line in self.match_roles:
             try:
-                subnet, roles = line.split(':')
+                header_name, regexp, roles = line.split(';')
                 roles = [r.strip() for r in roles.split(',')]
                 roles = set(filter(None, roles))
                 if not roles:
                     continue
             except (ValueError, AttributeError):
                 continue
-            if not subnet:
-                # No ip specification
-                continue
-            if '/' in subnet:
-                subnet, bits = subnet.split('/')
-                bits = int(bits)
-                if 0 >= bits > 32:
-                    continue
-            else:
-                # No mask, assume 32 bits
-                bits = 32
-            mask = (2 ** bits - 1) << (32 - bits)
-            subnet = quad2int(subnet) & mask
-            compiled.append((subnet, mask, roles))
+            compiled.append((header_name, regexp, roles))
             
     def _setPropValue(self, id, value):
         BasePlugin._setPropValue(self, id, value)
@@ -112,7 +93,7 @@ class AutoRole(BasePlugin):
             self._compile_subnets()
             if value and len(self._compiled) != len(self.match_roles):
                 raise ValueError(
-                    'match_roles contains invalid subnets and/or roles!')
+                    'match_roles contains invalid parameters!')
             notify(ConfigurationChangedEvent(self))
 
     #
@@ -127,14 +108,12 @@ class AutoRole(BasePlugin):
             return []
         if not self._compiled:
             return []
-        
-        ip = quad2int(self._find_ip(request))
-        if not ip:
-            return []
 
         result = set()
-        for subnet, mask, roles in self._compiled:
-            if ip & mask == subnet:
+        for header_name, regexp, roles in self._compiled:
+            header = request[header_name]
+            check_header = re.compile(regexp)
+            if check_header.match(header):
                 result.update(roles)
         return list(result)
 
@@ -162,13 +141,10 @@ class AutoRole(BasePlugin):
         if not self._compiled:
             return {}
 
-        # get client IP
-        ip = quad2int(self._find_ip(request))
-        if not ip:
-            return {}
-
-        for subnet, mask, roles in self._compiled:
-            if ip & mask == subnet:
+        for header_name, regexp, roles in self._compiled:
+            header = request[header_name]
+            check_header = re.compile(regexp)
+            if check_header.match(header):
                 return dict(AutoRole=True)
 
         return {}
