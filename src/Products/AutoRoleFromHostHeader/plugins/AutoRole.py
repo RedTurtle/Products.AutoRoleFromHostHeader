@@ -43,14 +43,6 @@ def addAutoRole( dispatcher
                                       'AutoRole+added.'
                                     % dispatcher.absolute_url() )
 
-def quad2int(ip):
-    "Convert an IP address in dotted quad notation to base10 integer"
-    try:
-        return struct.unpack('!L', socket.inet_aton(ip))[0]
-    except (TypeError, socket.error):
-        return 0
-
-
 class AutoRole(BasePlugin):
     """ Multi-plugin for assigning auto roles from IP. """
 
@@ -74,7 +66,7 @@ class AutoRole(BasePlugin):
         self.anon_only = False
         self._compiled = []
     
-    def _compile_subnets(self):
+    def _compile_matchs(self):
         self._compiled = compiled = []
         for line in self.match_roles:
             try:
@@ -90,7 +82,7 @@ class AutoRole(BasePlugin):
     def _setPropValue(self, id, value):
         BasePlugin._setPropValue(self, id, value)
         if id == 'match_roles':
-            self._compile_subnets()
+            self._compile_matchs()
             if value and len(self._compiled) != len(self.match_roles):
                 raise ValueError(
                     'match_roles contains invalid parameters!')
@@ -135,6 +127,7 @@ class AutoRole(BasePlugin):
         # Avoid creating anon user if this is a regular user
         # We actually have to poke request ourselves to avoid users from
         # root becoming anonymous...
+
         if getattr(request, '_auth', None):
             return {}
         

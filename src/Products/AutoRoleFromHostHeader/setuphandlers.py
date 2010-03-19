@@ -4,7 +4,7 @@ def setup_auto_role_plugin(portal):
     ids = uf.objectIds()
 
     if 'auto_role_header' not in ids:
-        factory = uf.manage_addProduct['AutoRole']
+        factory = uf.manage_addProduct['AutoRoleFromHostHeader']
         factory.addAutoRole('auto_role_header', 'Automatic Role Provider from HTTP Header')
 
         plugin = uf['auto_role_header']
