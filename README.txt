@@ -1,9 +1,7 @@
 AutoRoleFromHostHeader PAS Plugin
 =================================
 
----------------------------------------------------------------------------
 Add roles to (anonymous or logged-in) visitors based on browser HTTP header
----------------------------------------------------------------------------
 
 Introduction
 ============
@@ -28,7 +26,7 @@ property on the plugin's Properties screen. Each line represents a mapping
 from an header value (using a regexp match) to one or more roles. The format
 is as follows::
 
-  http_header_name; regular expression; role[, role ...]
+    http_header_name; regular expression; role[, role ...]
 
 Caveat
 ======
