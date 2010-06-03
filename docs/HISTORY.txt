@@ -5,6 +5,7 @@ Changelog
 ------------------
 
 * Fixed project URL on plone.org [keul]
+* Added plugin icon [keul]
 
 0.1.0a (2010-03-24)
 -------------------

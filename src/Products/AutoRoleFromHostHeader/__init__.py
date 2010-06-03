@@ -9,4 +9,6 @@ def initialize(context):
                           permission=add_user_folders,
                           constructors=(AutoRole.manage_addAutoRoleForm,
                                         AutoRole.addAutoRole),
-                          visibility=None)
+                          visibility=None,
+                          icon='plugins/www/login_sm.gif'
+                          )
