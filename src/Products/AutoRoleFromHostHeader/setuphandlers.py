@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 
 def setup_auto_role_plugin(portal):
     uf = portal.acl_users

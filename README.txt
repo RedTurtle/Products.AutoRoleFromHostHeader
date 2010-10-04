@@ -1,3 +1,4 @@
+=================================
 AutoRoleFromHostHeader PAS Plugin
 =================================
 
@@ -39,6 +40,24 @@ the Anonymous User which stops the lookup process.
 Credits
 =======
 
+Developed with the support of `Azienda USL Ferrara`__; Azienda USL Ferrara supports
+the `PloneGov initiative`__.
+
+.. image:: http://www.ausl.fe.it/logo_ausl.gif
+   :alt: Azienda USL's logo
+
+__ http://www.ausl.fe.it/
+__ http://www.plonegov.it/
+
+Authors
+=======
+
+* This product was developed by RedTurtle Technology team.
+
+  .. image:: http://www.redturtle.net/redturtle_banner.png
+     :alt: RedTurtle Technology Site
+     :target: http://www.redturtle.net/
+  
 * AutoRoleFromHostHeader is not an original idea but is taken from the work
   made by *Jarn company* for the `AutoRole`__ plugin.
 * Special thanks to *Mauro Amico* (mamico) for giving us the main direction.

@@ -1,11 +1,11 @@
 from setuptools import setup, find_packages
 import os
 
-version = '0.1.0a'
+version = '0.2.0'
 
 setup(name='Products.AutoRoleFromHostHeader',
       version=version,
-      description="PAS plugin for adding roles to (anonymous or logged-in) "
+      description="Plone PAS plugin for adding roles to (anonymous or logged-in) "
                   "visitors based on HTTP Headers.",
       long_description=open("README.txt").read() + "\n" +
                        open(os.path.join("docs", "HISTORY.txt")).read(),
@@ -14,7 +14,8 @@ setup(name='Products.AutoRoleFromHostHeader',
         "Framework :: Plone",
         "Framework :: Zope2",
         "Programming Language :: Python",
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 4 - Beta",
+        "Topic :: System :: Systems Administration :: Authentication/Directory",
         "Topic :: Software Development :: Libraries :: Python Modules",
         ],
       keywords='autorole pas plugin roles groups http header',

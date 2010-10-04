@@ -1,7 +1,7 @@
 import unittest
 
 def compiled(plugin):
-    plugin._compile_subnets()
+    plugin._compile_matchs()
     return plugin._compiled
 
 
