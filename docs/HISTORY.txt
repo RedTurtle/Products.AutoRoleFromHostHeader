@@ -1,11 +1,12 @@
 Changelog
 =========
 
-0.2.0 (Unreleased)
+0.2.0 (2010-10-04)
 ------------------
 
 * Fixed project URL on plone.org [keul]
 * Added plugin icon [keul]
+* Added z3c.autoinclude support [keul]
 
 0.1.0a (2010-03-24)
 -------------------

@@ -34,5 +34,7 @@ setup(name='Products.AutoRoleFromHostHeader',
       ],
       entry_points="""
       # -*- Entry points: -*-
+      [z3c.autoinclude.plugin]
+      target = plone
       """,
       )
