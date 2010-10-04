@@ -13,4 +13,3 @@ Changelog
 -------------------
 
 * Initial release
-
