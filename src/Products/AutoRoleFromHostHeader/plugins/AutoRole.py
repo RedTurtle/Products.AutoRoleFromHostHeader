@@ -94,6 +94,9 @@ class AutoRole(BasePlugin):
     security.declarePrivate('getRolesForPrincipal')
     def getRolesForPrincipal(self, principal, request=None):
         """ Assign roles based on 'request'. """
+        # we need this for uncontexted calls
+        if request == None:
+         return []
         if (self.anon_only and 
             principal is not None and 
             principal.getUserName() != 'Anonymous User'):
