@@ -29,6 +29,14 @@ is as follows::
 
     http_header_name; regular expression; role[, role ...]
 
+Assign groups, not roles
+------------------------
+
+This plugin can be used to assign groups instead of roles if used as a *group plugin*
+instead of a role plugin::
+
+    http_header_name; regular expression; group
+
 Caveat
 ======
 
