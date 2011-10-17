@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.3.0 (Unreleased)
+0.3.0 (2011-10-17)
 ------------------
 
 * Fixed compatibliy with webserverauth [yurj]
