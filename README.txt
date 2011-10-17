@@ -45,6 +45,14 @@ from a network matching one of its rules, you will NOT be able to log in with
 an account from a higher-up user folder. This is because AutoRole authenticates
 the Anonymous User which stops the lookup process.
 
+Dependencies
+============
+
+Tested with:
+
+* Plone 3.3
+* Plone 4.1
+
 Credits
 =======
 
