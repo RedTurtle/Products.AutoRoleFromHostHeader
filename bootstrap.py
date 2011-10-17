@@ -16,45 +16,85 @@
 Simply run this script in a directory containing a buildout.cfg.
 The script accepts buildout command-line options, so you can
 use the -c option to specify an alternate configuration file.
-
-$Id: bootstrap.py 102545 2009-08-06 14:49:47Z chrisw $
 """
 
-import os, shutil, sys, tempfile, urllib2
+import os
+import shutil
+import sys
+import tempfile
+import urllib2
+from optparse import OptionParser
 
 tmpeggs = tempfile.mkdtemp()
 
 is_jython = sys.platform.startswith('java')
 
-try:
-    import pkg_resources
-except ImportError:
-    ez = {}
-    exec urllib2.urlopen('http://peak.telecommunity.com/dist/ez_setup.py'
-                         ).read() in ez
-    ez['use_setuptools'](to_dir=tmpeggs, download_delay=0)
+# parsing arguments
+parser = OptionParser()
+parser.add_option("-v", "--version", dest="version",
+                          help="use a specific zc.buildout version")
+parser.add_option("-d", "--distribute",
+                   action="store_true", dest="distribute", default=False,
+                   help="Use Disribute rather than Setuptools.")
 
-    import pkg_resources
+parser.add_option("-c", None, action="store", dest="config_file",
+                   help=("Specify the path to the buildout configuration "
+                         "file to be used."))
 
-if sys.platform == 'win32':
-    def quote(c):
-        if ' ' in c:
-            return '"%s"' % c # work around spawn lamosity on windows
-        else:
-            return c
-else:
-    def quote (c):
-        return c
+options, args = parser.parse_args()
 
-cmd = 'from setuptools.command.easy_install import main; main()'
-ws  = pkg_resources.working_set
+# if -c was provided, we push it back into args for buildout' main function
+if options.config_file is not None:
+    args += ['-c', options.config_file]
 
-if len(sys.argv) > 2 and sys.argv[1] == '--version':
-    VERSION = '==%s' % sys.argv[2]
-    args = sys.argv[3:] + ['bootstrap']
+if options.version is not None:
+    VERSION = '==%s' % options.version
 else:
     VERSION = ''
-    args = sys.argv[1:] + ['bootstrap']
+
+# We decided to always use distribute, make sure this is the default for us
+# USE_DISTRIBUTE = options.distribute
+USE_DISTRIBUTE = True
+args = args + ['bootstrap']
+
+to_reload = False
+try:
+    import pkg_resources
+    if not hasattr(pkg_resources, '_distribute'):
+        to_reload = True
+        raise ImportError
+except ImportError:
+    ez = {}
+    if USE_DISTRIBUTE:
+        setup_url = 'http://python-distribute.org/distribute_setup.py'
+        exec urllib2.urlopen(setup_url).read() in ez
+        ez['use_setuptools'](to_dir=tmpeggs, download_delay=0, no_fake=True)
+    else:
+        ez_setup_url = 'http://peak.telecommunity.com/dist/ez_setup.py'
+        exec urllib2.urlopen(ez_setup_url).read() in ez
+        ez['use_setuptools'](to_dir=tmpeggs, download_delay=0)
+
+    if to_reload:
+        reload(pkg_resources)
+    else:
+        import pkg_resources
+
+
+def quote(c):
+    if sys.platform == 'win32':
+        if ' ' in c:
+            return '"%s"' % c  # work around spawn lamosity on windows
+    return c
+
+cmd = 'from setuptools.command.easy_install import main; main()'
+ws = pkg_resources.working_set
+
+if USE_DISTRIBUTE:
+    requirement = 'distribute'
+else:
+    requirement = 'setuptools'
+
+pythonpath = ws.find(pkg_resources.Requirement.parse(requirement)).location
 
 if is_jython:
     import subprocess
@@ -62,19 +102,15 @@ if is_jython:
     assert subprocess.Popen([sys.executable] + ['-c', quote(cmd), '-mqNxd',
            quote(tmpeggs), 'zc.buildout' + VERSION],
            env=dict(os.environ,
-               PYTHONPATH=
-               ws.find(pkg_resources.Requirement.parse('setuptools')).location
-               ),
+               PYTHONPATH=pythonpath),
            ).wait() == 0
 
 else:
     assert os.spawnle(
-        os.P_WAIT, sys.executable, quote (sys.executable),
-        '-c', quote (cmd), '-mqNxd', quote (tmpeggs), 'zc.buildout' + VERSION,
+        os.P_WAIT, sys.executable, quote(sys.executable),
+        '-c', quote(cmd), '-mqNxd', quote(tmpeggs), 'zc.buildout' + VERSION,
         dict(os.environ,
-            PYTHONPATH=
-            ws.find(pkg_resources.Requirement.parse('setuptools')).location
-            ),
+            PYTHONPATH=pythonpath),
         ) == 0
 
 ws.add_entry(tmpeggs)
