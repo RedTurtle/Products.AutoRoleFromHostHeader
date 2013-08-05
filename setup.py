@@ -34,7 +34,7 @@ setup(name='Products.AutoRoleFromHostHeader',
       zip_safe=False,
       install_requires=[
           'setuptools',
-          # -*- Extra requirements: -*-
+          'Products.PluggableAuthService',
       ],
       entry_points="""
       # -*- Entry points: -*-
