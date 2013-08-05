@@ -4,7 +4,10 @@ Changelog
 0.3.1 (Unreleased)
 ------------------
 
-* do not fail if the configured header was not found [keul]
+* Do not fail if the configured header was not found [keul]
+* Plone 4.3 partially supported (do not work with anonymous anymore) [keul]
+* Dropped support for ancient Plone versions (Python 2.3) [keul]
+* Pyflakes cleanup [keul]
 
 0.3.0 (2011-10-17)
 ------------------

@@ -35,6 +35,8 @@ This plugin can be used to assign groups instead of roles if used as a
 
     http_header_name; regular expression; group[, group ...]
 
+Groups plugin is not activated by default.
+
 Caveat
 ======
 

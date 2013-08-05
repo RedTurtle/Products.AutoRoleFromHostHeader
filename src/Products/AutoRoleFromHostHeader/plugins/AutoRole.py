@@ -1,26 +1,16 @@
-import socket
-import struct
-
-from zope.event import notify
-from Products.AutoRoleFromHostHeader.interfaces import ConfigurationChangedEvent
+# -*- coding: utf-8 -*-
 
 from AccessControl.SecurityInfo import ClassSecurityInfo
 from Globals import InitializeClass
+from Products.AutoRoleFromHostHeader.interfaces import ConfigurationChangedEvent
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
-
-from Products.PluggableAuthService.utils import classImplements
-from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
-from Products.PluggableAuthService.interfaces.plugins import IRolesPlugin
-from Products.PluggableAuthService.interfaces.plugins import IGroupsPlugin
-from Products.PluggableAuthService.interfaces.plugins import IExtractionPlugin
 from Products.PluggableAuthService.interfaces.plugins import IAuthenticationPlugin
-
-try:
-    set
-except NameError:
-    # Python 2.3
-    from sets import Set as set
-
+from Products.PluggableAuthService.interfaces.plugins import IExtractionPlugin
+from Products.PluggableAuthService.interfaces.plugins import IGroupsPlugin
+from Products.PluggableAuthService.interfaces.plugins import IRolesPlugin
+from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
+from Products.PluggableAuthService.utils import classImplements
+from zope.event import notify
 import re
 
 manage_addAutoRoleForm = PageTemplateFile(
