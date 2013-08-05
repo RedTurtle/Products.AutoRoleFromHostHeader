@@ -1,11 +1,10 @@
 Changelog
 =========
 
-0.3.1 (Unreleased)
+0.4.0 (Unreleased)
 ------------------
 
 * Do not fail if the configured header was not found [keul]
-* Plone 4.3 partially supported (do not work with anonymous anymore) [keul]
 * Dropped support for ancient Plone versions (Python 2.3) [keul]
 * Pyflakes cleanup [keul]
 
