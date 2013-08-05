@@ -51,7 +51,7 @@ class AutoRole(BasePlugin):
 
     _properties = (
         dict(id='title', label='Title', type='string', mode='w'),
-        dict(id='match_roles', label='Header name, regexp and roles', type='lines',
+        dict(id='match_roles', label='Header name; regexp; roles/groups', type='lines',
              mode='w'),
         dict(id='anon_only', label='Anonymous Only', type='boolean',
              mode='w'),
@@ -106,10 +106,11 @@ class AutoRole(BasePlugin):
 
         result = set()
         for header_name, regexp, roles in self._compiled:
-            header = request[header_name]
-            check_header = re.compile(regexp)
-            if check_header.match(header):
-                result.update(roles)
+            header = request.get(header_name)
+            if header:
+                check_header = re.compile(regexp)
+                if check_header.match(header):
+                    result.update(roles)
         return list(result)
 
     #
@@ -138,10 +139,11 @@ class AutoRole(BasePlugin):
             return {}
 
         for header_name, regexp, roles in self._compiled:
-            header = request[header_name]
-            check_header = re.compile(regexp)
-            if check_header.match(header):
-                return dict(AutoRole=True)
+            header = request.get(header_name)
+            if header:
+                check_header = re.compile(regexp)
+                if check_header.match(header):
+                    return dict(AutoRole=True)
 
         return {}
 
