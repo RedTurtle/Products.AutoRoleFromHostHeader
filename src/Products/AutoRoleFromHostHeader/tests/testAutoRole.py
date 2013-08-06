@@ -23,10 +23,13 @@ class FakeRequest(UserDict.UserDict):
     HTTP_USER_AGENT = ORIGINAL_HTTP_USER_AGENT
     
     def __getitem__(self, arg):
-        if arg=='REMOTE_ADDR':
+        return self.get(arg)
+
+    def get(self, key):
+        if key=='REMOTE_ADDR':
             return self.REMOTE_ADDR
-        if arg=='HTTP_USER_AGENT':
-            return self.HTTP_USER_AGENT
+        if key=='HTTP_USER_AGENT':
+            return self.HTTP_USER_AGENT        
 
 class TestAutoRole(unittest.TestCase, IRolesPlugin_conformance):
 
