@@ -142,7 +142,9 @@ class AutoRole(BasePlugin):
     #
     security.declarePrivate('authenticateCredentials')
     def authenticateCredentials(self, credentials):
-        if credentials.has_key('login'):
+        # Make sure we don't instantiate anonymous if there are other credentials
+        # BBB: this seems only work for basic authentication. Can we do something better?
+        if credentials.get('login'):
             return None
         autorole = credentials.get('AutoRole', None)
         if not autorole:

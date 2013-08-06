@@ -7,6 +7,7 @@ Changelog
 * Do not fail if the configured header was not found [keul]
 * Dropped support for ancient Plone versions (Python 2.3) [keul]
 * Pyflakes cleanup [keul]
+* Now works also on Plone 4.3 [keul]
 
 0.3.0 (2011-10-17)
 ------------------
