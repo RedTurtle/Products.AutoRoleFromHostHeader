@@ -1,8 +1,7 @@
 from setuptools import setup, find_packages
 import os
 
-version = 'll.dev0'
-
+version = '0.4.0.dev0'
 setup(name='Products.AutoRoleFromHostHeader',
       version=version,
       description="Plone PAS plugin for adding roles (or groups) to anonymous or logged-in "
