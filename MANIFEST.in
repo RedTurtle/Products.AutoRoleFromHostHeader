@@ -1,11 +1,6 @@
-include *.rst
+ude *.rst
 
 recursive-include docs *
-recursive-include src
-recursive-include src *.gif
-recursive-include src *.txt
-recursive-include src *.xml
-recursive-include src *.zcml
-recursive-include src *.zpt
+recursive-include src *
 
 global-exclude *.pyc
