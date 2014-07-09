@@ -48,11 +48,7 @@ authenticates the Anonymous User which stops the lookup process.
 Dependencies
 ============
 
-Tested with:
-
-* Plone 3.3
-* Plone 4.1
-* Plone 4.2
+Tested with all Plone versions from 3.3. to 4.3.
 
 Credits
 =======
