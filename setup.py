@@ -7,7 +7,7 @@ setup(name='Products.AutoRoleFromHostHeader',
       description="Plone PAS plugin for adding roles (or groups) to anonymous or logged-in "
                   "visitors looking for HTTP Headers.",
       long_description=open("README.rst").read() + "\n" +
-                       open(os.path.join("docs", "HISTORY.txt")).read(),
+                       open(os.path.join("docs", "HISTORY.rst")).read(),
       # Get more strings from http://www.python.org/pypi?%3Aaction=list_classifiers
       classifiers=[
         "Framework :: Plone",

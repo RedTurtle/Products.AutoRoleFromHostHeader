@@ -1,13 +1,7 @@
 Changelog
 =========
 
-ll (unreleased)
----------------
-
-- Nothing changed yet.
-
-
-0.4.0 (2013-12-02)
+0.4.0 (Unreleased)
 ------------------
 
 * Do not fail if the configured header was not found [keul]

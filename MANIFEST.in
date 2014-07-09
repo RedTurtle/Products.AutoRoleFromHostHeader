@@ -1,4 +1,4 @@
-ude *.rst
+include *.rst
 
 recursive-include docs *
 recursive-include src *
