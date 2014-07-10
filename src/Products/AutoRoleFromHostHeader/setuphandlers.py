@@ -15,6 +15,9 @@ def setup_auto_role_plugin(portal):
 
 
 def importVarious(context):
+    if context.readDataFile('autorole.txt') is None:
+        return
+
     site = context.getSite()
     logger = context.getLogger('autorole_header')
 

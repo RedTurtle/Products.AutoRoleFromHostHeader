@@ -8,6 +8,7 @@ Changelog
 * Dropped support for ancient Plone versions (Python 2.3) [keul]
 * Pyflakes cleanup [keul]
 * Now works also on Plone 4.3 [keul]
+* Run import step profile only when needed [keul]
 
 0.3.0 (2011-10-17)
 ------------------
