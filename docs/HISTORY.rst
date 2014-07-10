@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.4.1 (Unreleased)
+0.4.1 (2014-07-10)
 ------------------
 
 * Restored MANIFEST file that was destroyed [keul]
