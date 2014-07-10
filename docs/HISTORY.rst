@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.4.0 (Unreleased)
+0.4.0 (2014-07-10)
 ------------------
 
 * Do not fail if the configured header was not found [keul]
