@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from Acquisition import aq_parent, aq_inner
 from AccessControl.SecurityInfo import ClassSecurityInfo
 from Globals import InitializeClass
 from Products.AutoRoleFromHostHeader.interfaces import ConfigurationChangedEvent
@@ -102,8 +103,8 @@ class AutoRole(BasePlugin):
             return []
 
         result = set()
-        context = engine.getContext(request=request, portal=self._getPAS().aq_parent.aq_inner)
-        print self._getPAS().aq_parent.aq_inner
+        portal = aq_inner(aq_parent(self._getPAS()))
+        context = engine.getContext(request=request, portal=portal)
         for header_name, regexp, roles, condition in self._compiled:
             condition = engine.compile(condition)
             header = request.get(header_name)
@@ -138,8 +139,8 @@ class AutoRole(BasePlugin):
         if not self._compiled:
             return {}
         
-        context = engine.getContext(request=request, portal=self._getPAS().aq_parent.aq_inner)
-        site = self._getPAS().aq_parent.aq_inner
+        portal = aq_inner(aq_parent(self._getPAS()))
+        context = engine.getContext(request=request, portal=portal)
         for header_name, regexp, roles, condition in self._compiled:
             condition = engine.compile(condition)
             header = request.get(header_name)
