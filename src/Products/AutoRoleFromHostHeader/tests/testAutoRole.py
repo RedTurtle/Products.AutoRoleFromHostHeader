@@ -8,6 +8,8 @@ import UserDict
 from Products.PluggableAuthService.tests.conformance \
      import IRolesPlugin_conformance
 
+from App.class_init import InitializeClass
+from AccessControl import ClassSecurityInfo
 from AccessControl.User import SimpleUser
 
 ORIGINAL_REMOTE_ADDR = '127.0.0.1'
@@ -18,6 +20,7 @@ ORIGINAL_HTTP_USER_AGENT = ('Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_2; i
 class FakeRequest(UserDict.UserDict):
     client_ip = ''
     _auth = None
+    security = ClassSecurityInfo()
     
     REMOTE_ADDR = ORIGINAL_REMOTE_ADDR
     HTTP_USER_AGENT = ORIGINAL_HTTP_USER_AGENT
@@ -25,11 +28,14 @@ class FakeRequest(UserDict.UserDict):
     def __getitem__(self, arg):
         return self.get(arg)
 
+    security.declarePublic('get')
     def get(self, key):
         if key=='REMOTE_ADDR':
             return self.REMOTE_ADDR
         if key=='HTTP_USER_AGENT':
             return self.HTTP_USER_AGENT        
+InitializeClass(FakeRequest)
+
 
 class TestAutoRole(unittest.TestCase, IRolesPlugin_conformance):
 
@@ -76,6 +82,16 @@ class TestAutoRole(unittest.TestCase, IRolesPlugin_conformance):
         self.assertEqual( helper.getRolesForPrincipal( None, request ), [])
         request.REMOTE_ADDR = ''
         self.assertEqual( helper.getRolesForPrincipal( None, request ), [])
+
+    def test_getRolesForPrincipal_with_condition( self ):
+        helper = self._makeOne()
+        request = FakeRequest()
+        
+        helper._updateProperty('match_roles', [r'REMOTE_ADDR;127\.0\.0\.;Manager,Member;python:"Funny" in request.get("HTTP_USER_AGENT")'])
+        self.assertEqual( helper.getRolesForPrincipal( None, request ), [])
+        
+        request.HTTP_USER_AGENT='Funny 1.0'
+        self.assertEqual( helper.getRolesForPrincipal( None, request ), ['Member', 'Manager'])
 
     def test_extractCredentials( self ):
         helper = self._makeOne()
