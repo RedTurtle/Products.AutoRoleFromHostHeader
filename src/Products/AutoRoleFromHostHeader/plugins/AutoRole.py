@@ -3,6 +3,7 @@
 from AccessControl.SecurityInfo import ClassSecurityInfo
 from Globals import InitializeClass
 from Products.AutoRoleFromHostHeader.interfaces import ConfigurationChangedEvent
+from Products.PageTemplates.Expressions import createZopeEngine
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 from Products.PluggableAuthService.interfaces.plugins import IAuthenticationPlugin
 from Products.PluggableAuthService.interfaces.plugins import IExtractionPlugin
@@ -41,7 +42,7 @@ class AutoRole(BasePlugin):
 
     _properties = (
         dict(id='title', label='Title', type='string', mode='w'),
-        dict(id='match_roles', label='Header name; regexp; roles/groups', type='lines',
+        dict(id='match_roles', label='Header name; regexp; roles/groups ; TALES condition expression', type='lines',
              mode='w'),
         dict(id='anon_only', label='Anonymous Only', type='boolean',
              mode='w'),
@@ -60,14 +61,14 @@ class AutoRole(BasePlugin):
         self._compiled = compiled = []
         for line in self.match_roles:
             try:
-                header_name, regexp, roles = line.split(';')
+                header_name, regexp, roles, condition = line.split(';')
                 roles = [r.strip() for r in roles.split(',')]
                 roles = set(filter(None, roles))
                 if not roles:
                     continue
             except (ValueError, AttributeError):
                 continue
-            compiled.append((header_name, regexp, roles))
+            compiled.append((header_name, regexp, roles, condition))
             
     def _setPropValue(self, id, value):
         BasePlugin._setPropValue(self, id, value)
@@ -85,21 +86,25 @@ class AutoRole(BasePlugin):
     def getRolesForPrincipal(self, principal, request=None):
         """ Assign roles based on 'request'. """
         # we need this for uncontexted calls
-        if request == None:
-         return []
+        if request is None:
+            return []
+        engine = createZopeEngine()
         if (self.anon_only and 
-            principal is not None and 
-            principal.getUserName() != 'Anonymous User'):
+                principal is not None and 
+                principal.getUserName() != 'Anonymous User'):
             return []
         if not self._compiled:
             return []
 
         result = set()
-        for header_name, regexp, roles in self._compiled:
+        context = engine.getContext(request=request, portal=self._getPAS().aq_parent.aq_inner)
+        print self._getPAS().aq_parent.aq_inner
+        for header_name, regexp, roles, condition in self._compiled:
+            condition = engine.compile(condition)
             header = request.get(header_name)
             if header:
                 check_header = re.compile(regexp)
-                if check_header.match(header):
+                if check_header.match(header) and condition(context):
                     result.update(roles)
         return list(result)
 
@@ -121,18 +126,21 @@ class AutoRole(BasePlugin):
         # Avoid creating anon user if this is a regular user
         # We actually have to poke request ourselves to avoid users from
         # root becoming anonymous...
-
+        engine = createZopeEngine()
         if getattr(request, '_auth', None):
             return {}
         
         if not self._compiled:
             return {}
-
-        for header_name, regexp, roles in self._compiled:
+        
+        context = engine.getContext(request=request, portal=self._getPAS().aq_parent.aq_inner)
+        site = self._getPAS().aq_parent.aq_inner
+        for header_name, regexp, roles, condition in self._compiled:
+            condition = engine.compile(condition)
             header = request.get(header_name)
             if header:
                 check_header = re.compile(regexp)
-                if check_header.match(header):
+                if check_header.match(header) and condition(context):
                     return dict(AutoRole=True)
 
         return {}
