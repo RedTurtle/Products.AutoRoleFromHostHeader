@@ -22,12 +22,12 @@ class TestEvent(unittest.TestCase):
     def testChangingHEaderMatchFiresEvent(self):
         plugin = self._makeOne()
         self.assertEqual(eventtesting.getEvents(), [])
-        plugin.manage_changeProperties(match_roles=[r'REMOTE_ADDR;^10\.0\.(100|101)\.;Authenticated,Member'])
+        plugin.manage_changeProperties(match_roles=[r'REMOTE_ADDR;^10\.0\.(100|101)\.;Authenticated,Member;python:True'])
         self.assertEqual(len(eventtesting.getEvents()), 1)
         event = eventtesting.getEvents()[0]
         self.assertEqual(event.__class__.__name__, 'ConfigurationChangedEvent')
         self.assertEqual(event.object, plugin)
-        self.assertEqual(event.object.match_roles, (r'REMOTE_ADDR;^10\.0\.(100|101)\.;Authenticated,Member',))
+        self.assertEqual(event.object.match_roles, (r'REMOTE_ADDR;^10\.0\.(100|101)\.;Authenticated,Member;python:True',))
 
     def testChangingTitleFiresNoEvent(self):
         plugin = self._makeOne()

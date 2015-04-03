@@ -25,7 +25,9 @@ property on the plugin's properties screen (through ZMI).
 Each line represents a mapping from an header value (using a regexp match) to
 one or more roles. The format is as follows::
 
-    http_header_name; regular expression; role[, role ...]
+    http_header_name; regular expression; role[, role ...] ; TALES
+
+The TALES field allows arbitrary expressions to be added to role mappings, for example to check other HTTP headers.
 
 Assign groups, not roles
 ------------------------
@@ -33,7 +35,7 @@ Assign groups, not roles
 This plugin can be used to assign groups instead of roles if used as a
 *group plugin* instead of a role plugin::
 
-    http_header_name; regular expression; group[, group ...]
+    http_header_name; regular expression; group[, group ...] ; TALES
 
 Groups plugin is not activated by default.
 

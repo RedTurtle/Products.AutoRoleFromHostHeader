@@ -52,12 +52,12 @@ class TestAutoRole(unittest.TestCase, IRolesPlugin_conformance):
         helper = self._makeOne()
         request = FakeRequest()
 
-        helper._updateProperty('match_roles', [r'REMOTE_ADDR;127\.0\.0\.;Manager,Member'])
+        helper._updateProperty('match_roles', [r'REMOTE_ADDR;127\.0\.0\.;Manager,Member;python:True'])
         self.assertEqual( helper.getRolesForPrincipal( None, request ), ['Member','Manager'])
 
-        helper._updateProperty('match_roles', [r'REMOTE_ADDR;127\.0\.0\.;Manager',
-                                               r'REMOTE_ADDR;1\.28\.;Member',
-                                               r'HTTP_USER_AGENT;Mozilla\/5\.0;Member,Manager'])
+        helper._updateProperty('match_roles', [r'REMOTE_ADDR;127\.0\.0\.;Manager;python:True',
+                                               r'REMOTE_ADDR;1\.28\.;Member;python:True',
+                                               r'HTTP_USER_AGENT;Mozilla\/5\.0;Member,Manager;python:True'])
         request.REMOTE_ADDR='1.28.1.1'
         request.HTTP_USER_AGENT='Funny 1.0'
         self.assertEqual( helper.getRolesForPrincipal( None, request ), ['Member'])
@@ -76,8 +76,8 @@ class TestAutoRole(unittest.TestCase, IRolesPlugin_conformance):
         helper.anon_only = False
 
         # Test for invalid ip address
-        helper._updateProperty('match_roles', [r'REMOTE_ADDR;10\.0\.0\.;Manager',
-                                               r'REMOTE_ADDR;10\.1\.0\.;Manager'])
+        helper._updateProperty('match_roles', [r'REMOTE_ADDR;10\.0\.0\.;Manager;python:True',
+                                               r'REMOTE_ADDR;10\.1\.0\.;Manager;python:True'])
         request.REMOTE_ADDR = 'invalidip'
         self.assertEqual( helper.getRolesForPrincipal( None, request ), [])
         request.REMOTE_ADDR = ''
@@ -97,7 +97,7 @@ class TestAutoRole(unittest.TestCase, IRolesPlugin_conformance):
         helper = self._makeOne()
         request = FakeRequest()
 
-        helper._updateProperty('match_roles', [r'REMOTE_ADDR;^10\.0\.(100|101)\.;Authenticated,Member'])
+        helper._updateProperty('match_roles', [r'REMOTE_ADDR;^10\.0\.(100|101)\.;Authenticated,Member;python:True'])
         request.REMOTE_ADDR = '10.0.100.1'
         self.assertEqual(helper.extractCredentials( request ), {'AutoRole':True})
 
@@ -112,7 +112,7 @@ class TestAutoRole(unittest.TestCase, IRolesPlugin_conformance):
         helper = self._makeOne()
         request = FakeRequest()
 
-        helper._updateProperty('match_roles', [r'REMOTE_ADDR;^10\.0\.(100|101)\.;Authenticated,Member'])
+        helper._updateProperty('match_roles', [r'REMOTE_ADDR;^10\.0\.(100|101)\.;Authenticated,Member;python:True'])
 
         request.REMOTE_ADDR = 'invalidip'
         self.assertEqual( helper.extractCredentials( request ), {})
