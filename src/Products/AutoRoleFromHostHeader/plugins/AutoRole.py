@@ -3,6 +3,7 @@
 from Acquisition import aq_parent, aq_inner
 from AccessControl.SecurityInfo import ClassSecurityInfo
 from Globals import InitializeClass
+from logging import getLogger
 from Products.AutoRoleFromHostHeader.interfaces import ConfigurationChangedEvent
 from Products.PageTemplates.Expressions import createZopeEngine
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
@@ -18,6 +19,7 @@ import re
 manage_addAutoRoleForm = PageTemplateFile(
     'www/autoRoleAdd', globals(), __name__='manage_addAutoRoleForm')
 
+logger = getLogger("Products.AutoRoleFromHostHeader")
 
 def addAutoRole( dispatcher
                , id
@@ -106,12 +108,15 @@ class AutoRole(BasePlugin):
         portal = aq_inner(aq_parent(self._getPAS()))
         context = engine.getContext(request=request, portal=portal)
         for header_name, regexp, roles, condition in self._compiled:
-            condition = engine.compile(condition)
-            header = request.get(header_name)
-            if header:
-                check_header = re.compile(regexp)
-                if check_header.match(header) and condition(context):
-                    result.update(roles)
+            try:
+                condition = engine.compile(condition)
+                header = request.get(header_name)
+                if header:
+                    check_header = re.compile(regexp)
+                    if check_header.match(header) and condition(context):
+                        result.update(roles)
+            except Exception as e:
+                logger.exception("Couldn't evaluate AutoRole rule")
         return list(result)
 
     #
@@ -142,12 +147,15 @@ class AutoRole(BasePlugin):
         portal = aq_inner(aq_parent(self._getPAS()))
         context = engine.getContext(request=request, portal=portal)
         for header_name, regexp, roles, condition in self._compiled:
-            condition = engine.compile(condition)
-            header = request.get(header_name)
-            if header:
-                check_header = re.compile(regexp)
-                if check_header.match(header) and condition(context):
-                    return dict(AutoRole=True)
+            try:
+                condition = engine.compile(condition)
+                header = request.get(header_name)
+                if header:
+                    check_header = re.compile(regexp)
+                    if check_header.match(header) and condition(context):
+                        return dict(AutoRole=True)
+            except Exception as e:
+                logger.exception("Couldn't evaluate AutoRole rule")
 
         return {}
 
