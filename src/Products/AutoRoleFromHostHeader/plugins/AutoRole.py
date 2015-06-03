@@ -61,7 +61,12 @@ class AutoRole(BasePlugin):
         self._compiled = compiled = []
         for line in self.match_roles:
             try:
-                header_name, regexp, roles, condition = line.split(';')
+                values = line.split(';')
+                if len(values) == 3:
+                    # If there isn't a condition, pretend the condition was
+                    # something that's always true
+                    values = values + ['python:True',]
+                header_name, regexp, roles, condition = values
                 roles = [r.strip() for r in roles.split(',')]
                 roles = set(filter(None, roles))
                 if not roles:
