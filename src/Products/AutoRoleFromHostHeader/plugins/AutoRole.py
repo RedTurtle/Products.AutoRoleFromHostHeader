@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 
+from Acquisition import aq_parent, aq_inner
 from AccessControl.SecurityInfo import ClassSecurityInfo
 from Globals import InitializeClass
+from logging import getLogger
 from Products.AutoRoleFromHostHeader.interfaces import ConfigurationChangedEvent
+from Products.PageTemplates.Expressions import createZopeEngine
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 from Products.PluggableAuthService.interfaces.plugins import IAuthenticationPlugin
 from Products.PluggableAuthService.interfaces.plugins import IExtractionPlugin
@@ -16,6 +19,7 @@ import re
 manage_addAutoRoleForm = PageTemplateFile(
     'www/autoRoleAdd', globals(), __name__='manage_addAutoRoleForm')
 
+logger = getLogger("Products.AutoRoleFromHostHeader")
 
 def addAutoRole( dispatcher
                , id
@@ -41,7 +45,7 @@ class AutoRole(BasePlugin):
 
     _properties = (
         dict(id='title', label='Title', type='string', mode='w'),
-        dict(id='match_roles', label='Header name; regexp; roles/groups', type='lines',
+        dict(id='match_roles', label='Header name; regexp; roles/groups ; TALES condition expression', type='lines',
              mode='w'),
         dict(id='anon_only', label='Anonymous Only', type='boolean',
              mode='w'),
@@ -60,14 +64,19 @@ class AutoRole(BasePlugin):
         self._compiled = compiled = []
         for line in self.match_roles:
             try:
-                header_name, regexp, roles = line.split(';')
+                values = line.split(';')
+                if len(values) == 3:
+                    # If there isn't a condition, pretend the condition was
+                    # something that's always true
+                    values = values + ['python:True',]
+                header_name, regexp, roles, condition = values
                 roles = [r.strip() for r in roles.split(',')]
                 roles = set(filter(None, roles))
                 if not roles:
                     continue
             except (ValueError, AttributeError):
                 continue
-            compiled.append((header_name, regexp, roles))
+            compiled.append((header_name, regexp, roles, condition))
             
     def _setPropValue(self, id, value):
         BasePlugin._setPropValue(self, id, value)
@@ -85,22 +94,29 @@ class AutoRole(BasePlugin):
     def getRolesForPrincipal(self, principal, request=None):
         """ Assign roles based on 'request'. """
         # we need this for uncontexted calls
-        if request == None:
-         return []
+        if request is None:
+            return []
+        engine = createZopeEngine()
         if (self.anon_only and 
-            principal is not None and 
-            principal.getUserName() != 'Anonymous User'):
+                principal is not None and 
+                principal.getUserName() != 'Anonymous User'):
             return []
         if not self._compiled:
             return []
 
         result = set()
-        for header_name, regexp, roles in self._compiled:
-            header = request.get(header_name)
-            if header:
-                check_header = re.compile(regexp)
-                if check_header.match(header):
-                    result.update(roles)
+        portal = aq_inner(aq_parent(self._getPAS()))
+        context = engine.getContext(request=request, portal=portal)
+        for header_name, regexp, roles, condition in self._compiled:
+            try:
+                condition = engine.compile(condition)
+                header = request.get(header_name)
+                if header:
+                    check_header = re.compile(regexp)
+                    if check_header.match(header) and condition(context):
+                        result.update(roles)
+            except Exception as e:
+                logger.exception("Couldn't evaluate AutoRole rule")
         return list(result)
 
     #
@@ -121,19 +137,25 @@ class AutoRole(BasePlugin):
         # Avoid creating anon user if this is a regular user
         # We actually have to poke request ourselves to avoid users from
         # root becoming anonymous...
-
+        engine = createZopeEngine()
         if getattr(request, '_auth', None):
             return {}
         
         if not self._compiled:
             return {}
-
-        for header_name, regexp, roles in self._compiled:
-            header = request.get(header_name)
-            if header:
-                check_header = re.compile(regexp)
-                if check_header.match(header):
-                    return dict(AutoRole=True)
+        
+        portal = aq_inner(aq_parent(self._getPAS()))
+        context = engine.getContext(request=request, portal=portal)
+        for header_name, regexp, roles, condition in self._compiled:
+            try:
+                condition = engine.compile(condition)
+                header = request.get(header_name)
+                if header:
+                    check_header = re.compile(regexp)
+                    if check_header.match(header) and condition(context):
+                        return dict(AutoRole=True)
+            except Exception as e:
+                logger.exception("Couldn't evaluate AutoRole rule")
 
         return {}
 

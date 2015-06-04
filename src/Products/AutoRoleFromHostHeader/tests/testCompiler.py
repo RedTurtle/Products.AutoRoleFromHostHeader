@@ -16,15 +16,15 @@ class TestCompiler(unittest.TestCase):
 
     def testTwoRoles(self):
         plugin = self._makeOne(match_roles=[r'REMOTE_ADDR;127\.0\.0\.;Manager,Member'])
-        self.assertEqual(compiled(plugin), [('REMOTE_ADDR', '127\\.0\\.0\\.', set(['Member', 'Manager']))])
+        self.assertEqual(compiled(plugin), [('REMOTE_ADDR', '127\\.0\\.0\\.', set(['Member', 'Manager']), 'python:True')])
 
     def testDuplicateRole(self):
         plugin = self._makeOne(match_roles=[r'REMOTE_ADDR;127\.0\.0\.;Manager,Manager'])
-        self.assertEqual(compiled(plugin), [('REMOTE_ADDR', '127\\.0\\.0\\.', set(['Manager']))])
+        self.assertEqual(compiled(plugin), [('REMOTE_ADDR', '127\\.0\\.0\\.', set(['Manager']), 'python:True')])
 
     def testWhitespace(self):
         plugin = self._makeOne(match_roles=[r'REMOTE_ADDR;127\.0\.0\.; Manager, Member'])
-        self.assertEqual(compiled(plugin), [('REMOTE_ADDR', '127\\.0\\.0\\.', set(['Manager', 'Member']))])
+        self.assertEqual(compiled(plugin), [('REMOTE_ADDR', '127\\.0\\.0\\.', set(['Manager', 'Member']), 'python:True')])
 
     def testNoIp(self):
         plugin = self._makeOne(match_roles=[':Manager'])
