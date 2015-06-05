@@ -27,7 +27,10 @@ one or more roles. The format is as follows::
 
     http_header_name; regular expression; role[, role ...] ; TALES
 
-The TALES field allows arbitrary expressions to be added to role mappings, for example to check other HTTP headers.
+The (optional) TALES allows arbitrary expressions to be added to role mappings,
+for example to check other HTTP headers::
+
+    ...;python:request.getHeader('MY-SPECIAL-HEADER')=='somevalue'
 
 Assign groups, not roles
 ------------------------
@@ -79,9 +82,11 @@ Authors
      :alt: RedTurtle Technology Site
      :target: http://www.redturtle.it/
   
-* Special thanks to *Mauro Amico* (mamico) for giving us the main direction.
 * AutoRoleFromHostHeader is not an original idea but is taken from the work
   made by *Jarn company* for the `AutoRole`__ plugin.
+* Special thanks to *Mauro Amico* (mamico) for giving us the main direction.
+* *Matthew Wilkes* (MatthewWilkes) contributed adding the conditional
+  expression.
 
 __ http://pypi.python.org/pypi/Products.AutoRole
 
