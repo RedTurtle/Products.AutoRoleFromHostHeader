@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.4.2 (unreleased)
+1.0.0 (2015-06-05)
 ------------------
 
 **Dropped Plone 3 compatibility**
