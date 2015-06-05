@@ -4,8 +4,9 @@ Changelog
 0.4.2 (unreleased)
 ------------------
 
-* Add TALES field to assignments, allowing users to provide arbitrary conditions [matthewwilkes]
+**Dropped Plone 3 compatibility**
 
+* Add TALES field to assignments, allowing users to provide arbitrary conditions [matthewwilkes]
 
 0.4.1 (2014-07-10)
 ------------------

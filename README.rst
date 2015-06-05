@@ -53,7 +53,7 @@ authenticates the Anonymous User which stops the lookup process.
 Dependencies
 ============
 
-Tested with all Plone versions from 3.3. to 4.3.
+Tested with all Plone versions from 4.0 to 4.3.
 
 Credits
 =======
