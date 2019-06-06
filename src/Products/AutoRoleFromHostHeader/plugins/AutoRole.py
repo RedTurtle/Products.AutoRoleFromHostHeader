@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from Acquisition import aq_parent, aq_inner
+from AccessControl.class_init import InitializeClass
 from AccessControl.SecurityInfo import ClassSecurityInfo
-from Globals import InitializeClass
 from logging import getLogger
 from Products.AutoRoleFromHostHeader.interfaces import ConfigurationChangedEvent
 from Products.PageTemplates.Expressions import createZopeEngine
