@@ -4,7 +4,8 @@ Changelog
 1.0.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Zope 4 compatibility: Replaced broken imports of InitializeClass.
+  [reinhardt]
 
 
 1.0.0 (2015-06-05)
