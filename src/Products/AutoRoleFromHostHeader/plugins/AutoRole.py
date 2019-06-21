@@ -71,7 +71,7 @@ class AutoRole(BasePlugin):
                     values = values + ['python:True',]
                 header_name, regexp, roles, condition = values
                 roles = [r.strip() for r in roles.split(',')]
-                roles = set(filter(None, roles))
+                roles = set([role for role in roles if role])
                 if not roles:
                     continue
             except (ValueError, AttributeError):
