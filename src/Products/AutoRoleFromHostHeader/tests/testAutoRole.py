@@ -3,7 +3,7 @@
 #
 
 import unittest
-import UserDict
+from six.moves import UserDict
 
 from AccessControl import ClassSecurityInfo
 from AccessControl.User import SimpleUser
@@ -16,7 +16,7 @@ ORIGINAL_HTTP_USER_AGENT = ('Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_2; i
                             'AppleWebKit/531.21.8 (KHTML, like Gecko) '
                             'Version/4.0.4 Safari/531.21.10')
 
-class FakeRequest(UserDict.UserDict):
+class FakeRequest(UserDict):
     client_ip = ''
     _auth = None
     security = ClassSecurityInfo()
