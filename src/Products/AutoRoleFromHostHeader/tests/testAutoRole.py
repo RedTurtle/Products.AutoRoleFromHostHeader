@@ -5,12 +5,11 @@
 import unittest
 import UserDict
 
-from Products.PluggableAuthService.tests.conformance \
-     import IRolesPlugin_conformance
-
-from App.class_init import InitializeClass
 from AccessControl import ClassSecurityInfo
 from AccessControl.User import SimpleUser
+from App.class_init import InitializeClass
+from Products.PluggableAuthService.tests.conformance import \
+    IRolesPlugin_conformance
 
 ORIGINAL_REMOTE_ADDR = '127.0.0.1'
 ORIGINAL_HTTP_USER_AGENT = ('Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_2; it-it) '

@@ -1,6 +1,6 @@
 from AccessControl.Permissions import add_user_folders
-from Products.PluggableAuthService import registerMultiPlugin
 from Products.AutoRoleFromHostHeader.plugins import AutoRole
+from Products.PluggableAuthService import registerMultiPlugin
 
 registerMultiPlugin(AutoRole.AutoRole.meta_type)
 

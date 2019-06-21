@@ -1,7 +1,5 @@
+from zope.component.interfaces import IObjectEvent, ObjectEvent
 from zope.interface import implements
-
-from zope.component.interfaces import IObjectEvent
-from zope.component.interfaces import ObjectEvent
 
 
 class IConfigurationChangedEvent(IObjectEvent):

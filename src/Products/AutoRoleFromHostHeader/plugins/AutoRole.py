@@ -1,20 +1,20 @@
 # -*- coding: utf-8 -*-
 
-from Acquisition import aq_parent, aq_inner
+import re
+from logging import getLogger
+
 from AccessControl.class_init import InitializeClass
 from AccessControl.SecurityInfo import ClassSecurityInfo
-from logging import getLogger
-from Products.AutoRoleFromHostHeader.interfaces import ConfigurationChangedEvent
+from Acquisition import aq_inner, aq_parent
+from Products.AutoRoleFromHostHeader.interfaces import \
+    ConfigurationChangedEvent
 from Products.PageTemplates.Expressions import createZopeEngine
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
-from Products.PluggableAuthService.interfaces.plugins import IAuthenticationPlugin
-from Products.PluggableAuthService.interfaces.plugins import IExtractionPlugin
-from Products.PluggableAuthService.interfaces.plugins import IGroupsPlugin
-from Products.PluggableAuthService.interfaces.plugins import IRolesPlugin
+from Products.PluggableAuthService.interfaces.plugins import (
+    IAuthenticationPlugin, IExtractionPlugin, IGroupsPlugin, IRolesPlugin)
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 from Products.PluggableAuthService.utils import classImplements
 from zope.event import notify
-import re
 
 manage_addAutoRoleForm = PageTemplateFile(
     'www/autoRoleAdd', globals(), __name__='manage_addAutoRoleForm')
