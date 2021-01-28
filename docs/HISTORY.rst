@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.0.1 (unreleased)
+1.0.1 (2021-01-28)
 ------------------
 
 - Zope 4 compatibility: Replaced broken imports of InitializeClass.
