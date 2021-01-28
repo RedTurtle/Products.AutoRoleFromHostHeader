@@ -6,6 +6,8 @@ Changelog
 
 - Zope 4 compatibility: Replaced broken imports of InitializeClass.
   [reinhardt]
+- Python 3 compatibility
+  [reinhardt]
 
 
 1.0.0 (2015-06-05)
