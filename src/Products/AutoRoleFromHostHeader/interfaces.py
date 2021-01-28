@@ -1,11 +1,10 @@
-from zope.interface import implements
-
-from zope.component.interfaces import IObjectEvent
-from zope.component.interfaces import ObjectEvent
+from zope.component.interfaces import IObjectEvent, ObjectEvent
+from zope.interface import implementer
 
 
 class IConfigurationChangedEvent(IObjectEvent):
     """Fired when the ip_roles property has changed."""
 
+@implementer(IConfigurationChangedEvent)
 class ConfigurationChangedEvent(ObjectEvent):
-    implements(IConfigurationChangedEvent)
+    pass

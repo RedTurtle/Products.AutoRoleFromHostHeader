@@ -1,5 +1,6 @@
 import unittest
 
+
 def compiled(plugin):
     plugin._compile_matchs()
     return plugin._compiled
@@ -51,4 +52,3 @@ def test_suite():
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(TestCompiler))
     return suite
-
