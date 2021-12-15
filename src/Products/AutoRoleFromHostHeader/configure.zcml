@@ -12,6 +12,14 @@
     provides="Products.GenericSetup.interfaces.EXTENSION"
     />
 
+  <genericsetup:registerProfile
+    name="uninstall"
+    title="AutoRole HTTP Header PAS Plugin"
+    directory="profiles/uninstall"
+    description="PAS plugin assigning roles based on HTTP Header match."
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+    />
+
   <genericsetup:importStep
     name="autorole"
     title="AutoRole HTTP Header PAS Plugin"
