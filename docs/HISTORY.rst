@@ -4,7 +4,8 @@ Changelog
 1.0.2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Make the import compatible with Plone 6
+  [ale-rt]
 
 
 1.0.1 (2021-01-28)
