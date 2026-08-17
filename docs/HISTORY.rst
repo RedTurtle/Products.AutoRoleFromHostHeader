@@ -1,8 +1,14 @@
 Changelog
 =========
 
-1.0.2 (unreleased)
-------------------
+2.0.0a2 (unreleased)
+--------------------
+
+- Nothing changed yet.
+
+
+2.0.0a1 (2026-08-17)
+--------------------
 
 - Make the import compatible with Plone 6
   [ale-rt]
